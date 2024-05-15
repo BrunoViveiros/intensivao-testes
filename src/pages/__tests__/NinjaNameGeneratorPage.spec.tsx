@@ -23,35 +23,52 @@ const inputNames = {
   cardExpiration: /card expiration date/i,
 };
 
+const setup = () => {
+  render(<NinjaNameGeneratorPage />);
+
+  const user = userEvent.setup();
+
+  // const form = screen.getByRole('form', { name: 'ninjaNameForm' });
+
+  const cardNumberInput = screen.getByRole('textbox', {
+    name: inputNames.cardNumber,
+  });
+  const cardVerificationInput = screen.getByRole('textbox', {
+    name: inputNames.cardVerification,
+  });
+  const cardExpirationInput = screen.getByRole('textbox', {
+    name: inputNames.cardExpiration,
+  });
+  const button = screen.getByRole('button', { name: 'Gerar' });
+
+  return {
+    cardNumberInput,
+    cardVerificationInput,
+    cardExpirationInput,
+    button,
+    user,
+  };
+};
+
 describe('<NinjaNameGeneratorPage />', () => {
   it('renders initial state correctly', () => {
-    render(<NinjaNameGeneratorPage />);
-    // const form = screen.getByRole('form', { name: 'ninjaNameForm' });
-    // const inputs = within(form).getAllByRole('textbox', { value: undefined });
-    // const button = within(form).getByRole('button', { name: 'Gerar' });
+    const {
+      button,
+      cardExpirationInput,
+      cardNumberInput,
+      cardVerificationInput,
+    } = setup();
 
-    const inputs = screen.getAllByRole('textbox', { value: undefined });
-    const button = screen.getByRole('button', { name: 'Gerar' });
-
-    expect(inputs).toHaveLength(3);
+    expect(cardExpirationInput).toHaveValue('');
+    expect(cardNumberInput).toHaveValue('');
+    expect(cardVerificationInput).toHaveValue('');
     expect(button).toBeDisabled();
   });
 
   describe('keeps the button disabled if any field is empty', () => {
     it('keeps the button disabled if cardNumber field is empty', async () => {
-      render(<NinjaNameGeneratorPage />);
-
-      const user = userEvent.setup();
-
-      const cardVerificationInput = screen.getByRole('textbox', {
-        name: inputNames.cardVerification,
-      });
-
-      const cardExpirationInput = screen.getByRole('textbox', {
-        name: inputNames.cardExpiration,
-      });
-
-      const button = screen.getByRole('button', { name: 'Gerar' });
+      const { button, cardExpirationInput, cardVerificationInput, user } =
+        setup();
 
       await user.type(cardVerificationInput, formValueMock.valid.verification);
       await user.type(cardExpirationInput, formValueMock.valid.expiration);
@@ -65,19 +82,7 @@ describe('<NinjaNameGeneratorPage />', () => {
     });
 
     it('keeps the button disabled if cardVerificationValue field is empty', async () => {
-      render(<NinjaNameGeneratorPage />);
-
-      const user = userEvent.setup();
-
-      const cardNumberInput = screen.getByRole('textbox', {
-        name: inputNames.cardNumber,
-      });
-
-      const cardExpirationInput = screen.getByRole('textbox', {
-        name: inputNames.cardExpiration,
-      });
-
-      const button = screen.getByRole('button', { name: 'Gerar' });
+      const { button, cardExpirationInput, cardNumberInput, user } = setup();
 
       await user.type(cardNumberInput, formValueMock.valid.card);
       await user.type(cardExpirationInput, formValueMock.valid.expiration);
@@ -89,19 +94,7 @@ describe('<NinjaNameGeneratorPage />', () => {
     });
 
     it('keeps the button disabled if cardExpirationDate field is empty', async () => {
-      render(<NinjaNameGeneratorPage />);
-
-      const user = userEvent.setup();
-
-      const cardNumberInput = screen.getByRole('textbox', {
-        name: inputNames.cardNumber,
-      });
-
-      const cardVerificationInput = screen.getByRole('textbox', {
-        name: inputNames.cardVerification,
-      });
-
-      const button = screen.getByRole('button', { name: 'Gerar' });
+      const { button, cardVerificationInput, cardNumberInput, user } = setup();
 
       await user.type(cardNumberInput, formValueMock.valid.card);
       await user.type(cardVerificationInput, formValueMock.valid.verification);
@@ -116,20 +109,13 @@ describe('<NinjaNameGeneratorPage />', () => {
 
   describe('keeps the button disabled if any field is invalid', () => {
     it('keeps the button disabled if cardNumber field is invalid', async () => {
-      render(<NinjaNameGeneratorPage />);
-
-      const user = userEvent.setup();
-
-      const cardNumberInput = screen.getByRole('textbox', {
-        name: inputNames.cardNumber,
-      });
-      const cardVerificationInput = screen.getByRole('textbox', {
-        name: inputNames.cardVerification,
-      });
-      const cardExpirationInput = screen.getByRole('textbox', {
-        name: inputNames.cardExpiration,
-      });
-      const button = screen.getByRole('button', { name: 'Gerar' });
+      const {
+        button,
+        cardVerificationInput,
+        cardExpirationInput,
+        cardNumberInput,
+        user,
+      } = setup();
 
       await user.type(cardNumberInput, formValueMock.invalid.card);
       await user.type(cardVerificationInput, formValueMock.valid.verification);
@@ -145,20 +131,13 @@ describe('<NinjaNameGeneratorPage />', () => {
     });
 
     it('keeps the button disabled if cardVerificationValue field is invalid', async () => {
-      render(<NinjaNameGeneratorPage />);
-
-      const user = userEvent.setup();
-
-      const cardNumberInput = screen.getByRole('textbox', {
-        name: inputNames.cardNumber,
-      });
-      const cardVerificationInput = screen.getByRole('textbox', {
-        name: inputNames.cardVerification,
-      });
-      const cardExpirationInput = screen.getByRole('textbox', {
-        name: inputNames.cardExpiration,
-      });
-      const button = screen.getByRole('button', { name: 'Gerar' });
+      const {
+        button,
+        cardVerificationInput,
+        cardExpirationInput,
+        cardNumberInput,
+        user,
+      } = setup();
 
       await user.type(cardNumberInput, formValueMock.valid.card);
       await user.type(
@@ -177,20 +156,13 @@ describe('<NinjaNameGeneratorPage />', () => {
     });
 
     it('keeps the button disabled if cardExpirationDate field is invalid', async () => {
-      render(<NinjaNameGeneratorPage />);
-
-      const user = userEvent.setup();
-
-      const cardNumberInput = screen.getByRole('textbox', {
-        name: inputNames.cardNumber,
-      });
-      const cardVerificationInput = screen.getByRole('textbox', {
-        name: inputNames.cardVerification,
-      });
-      const cardExpirationInput = screen.getByRole('textbox', {
-        name: inputNames.cardExpiration,
-      });
-      const button = screen.getByRole('button', { name: 'Gerar' });
+      const {
+        button,
+        cardVerificationInput,
+        cardExpirationInput,
+        cardNumberInput,
+        user,
+      } = setup();
 
       await user.type(cardNumberInput, formValueMock.valid.card);
       await user.type(cardVerificationInput, formValueMock.valid.verification);
@@ -207,20 +179,13 @@ describe('<NinjaNameGeneratorPage />', () => {
   });
 
   it('enables the button when all fields are valid', async () => {
-    render(<NinjaNameGeneratorPage />);
-
-    const user = userEvent.setup();
-
-    const cardNumberInput = screen.getByRole('textbox', {
-      name: inputNames.cardNumber,
-    });
-    const cardVerificationInput = screen.getByRole('textbox', {
-      name: inputNames.cardVerification,
-    });
-    const cardExpirationInput = screen.getByRole('textbox', {
-      name: inputNames.cardExpiration,
-    });
-    const button = screen.getByRole('button', { name: 'Gerar' });
+    const {
+      button,
+      cardVerificationInput,
+      cardExpirationInput,
+      cardNumberInput,
+      user,
+    } = setup();
 
     await user.type(cardNumberInput, formValueMock.valid.card);
     await user.type(cardVerificationInput, formValueMock.valid.verification);
@@ -234,20 +199,13 @@ describe('<NinjaNameGeneratorPage />', () => {
   });
 
   it('generates a ninja name when the button is clicked', async () => {
-    render(<NinjaNameGeneratorPage />);
-
-    const user = userEvent.setup();
-
-    const cardNumberInput = screen.getByRole('textbox', {
-      name: inputNames.cardNumber,
-    });
-    const cardVerificationInput = screen.getByRole('textbox', {
-      name: inputNames.cardVerification,
-    });
-    const cardExpirationInput = screen.getByRole('textbox', {
-      name: inputNames.cardExpiration,
-    });
-    const button = screen.getByRole('button', { name: 'Gerar' });
+    const {
+      button,
+      cardVerificationInput,
+      cardExpirationInput,
+      cardNumberInput,
+      user,
+    } = setup();
 
     await user.type(cardNumberInput, formValueMock.valid.card);
     await user.type(cardVerificationInput, formValueMock.valid.verification);
@@ -261,20 +219,13 @@ describe('<NinjaNameGeneratorPage />', () => {
   });
 
   it('goes back to the form when back button is clicked', async () => {
-    render(<NinjaNameGeneratorPage />);
-
-    const user = userEvent.setup();
-
-    const cardNumberInput = screen.getByRole('textbox', {
-      name: inputNames.cardNumber,
-    });
-    const cardVerificationInput = screen.getByRole('textbox', {
-      name: inputNames.cardVerification,
-    });
-    const cardExpirationInput = screen.getByRole('textbox', {
-      name: inputNames.cardExpiration,
-    });
-    const button = screen.getByRole('button', { name: 'Gerar' });
+    const {
+      button,
+      cardVerificationInput,
+      cardExpirationInput,
+      cardNumberInput,
+      user,
+    } = setup();
 
     await user.type(cardNumberInput, formValueMock.valid.card);
     await user.type(cardVerificationInput, formValueMock.valid.verification);
