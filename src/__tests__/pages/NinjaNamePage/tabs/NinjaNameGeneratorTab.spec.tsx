@@ -41,8 +41,290 @@ const formQueries = (currentScreen: Screen<typeof queries>) => {
 };
 
 describe('<NinjaNameGeneratorTab />', () => {
-  describe('when the form is submitted', () => {
-    it('generates a new name', async () => {
+  it('renders initial state correctly', () => {
+    const NinjaNameGeneratorTab = makeNinjaNameGeneratorTab({
+      useGenerateNinjaName: () => ({
+        isGenerating: false,
+        error: undefined,
+        generateNinjaName: async () => undefined,
+        ninjaName: undefined,
+        reset: () => undefined,
+      }),
+    });
+
+    render(<NinjaNameGeneratorTab />);
+
+    const {
+      button,
+      cardExpirationInput,
+      cardNumberInput,
+      cardVerificationInput,
+    } = formQueries(screen);
+
+    expect(cardExpirationInput).toHaveValue('');
+    expect(cardNumberInput).toHaveValue('');
+    expect(cardVerificationInput).toHaveValue('');
+    expect(button).toBeDisabled();
+  });
+
+  describe('keeps the button disabled if any field is empty', () => {
+    it('keeps the button disabled if cardNumber field is empty', async () => {
+      const user = userEvent.setup();
+
+      const NinjaNameGeneratorTab = makeNinjaNameGeneratorTab({
+        useGenerateNinjaName: () => ({
+          isGenerating: false,
+          error: undefined,
+          generateNinjaName: async () => undefined,
+          ninjaName: undefined,
+          reset: () => undefined,
+        }),
+      });
+
+      render(<NinjaNameGeneratorTab />);
+
+      const { button, cardExpirationInput, cardVerificationInput } =
+        formQueries(screen);
+
+      await user.type(cardVerificationInput, formValueMock.valid.verification);
+      await user.type(
+        cardExpirationInput,
+        dayjs(formValueMock.valid.expiration).format('MM/YYYY')
+      );
+      await user.keyboard('{Tab}'); //workaround
+
+      expect(button).toBeDisabled();
+      expect(cardVerificationInput).toHaveValue(
+        formValueMock.valid.verification
+      );
+      expect(cardExpirationInput).toHaveValue(
+        dayjs(formValueMock.valid.expiration).format('MM/YYYY')
+      );
+    });
+
+    it('keeps the button disabled if cardVerificationValue field is empty', async () => {
+      const user = userEvent.setup();
+
+      const NinjaNameGeneratorTab = makeNinjaNameGeneratorTab({
+        useGenerateNinjaName: () => ({
+          isGenerating: false,
+          error: undefined,
+          generateNinjaName: async () => undefined,
+          ninjaName: undefined,
+          reset: () => undefined,
+        }),
+      });
+
+      render(<NinjaNameGeneratorTab />);
+
+      const { button, cardExpirationInput, cardNumberInput } =
+        formQueries(screen);
+
+      await user.type(cardNumberInput, formValueMock.valid.card);
+      await user.type(
+        cardExpirationInput,
+        dayjs(formValueMock.valid.expiration).format('MM/YYYY')
+      );
+      await user.keyboard('{Tab}'); //workaround
+
+      expect(button).toBeDisabled();
+      expect(cardNumberInput).toHaveValue(formValueMock.valid.card);
+      expect(cardExpirationInput).toHaveValue(
+        dayjs(formValueMock.valid.expiration).format('MM/YYYY')
+      );
+    });
+
+    it('keeps the button disabled if cardExpirationDate field is empty', async () => {
+      const user = userEvent.setup();
+
+      const NinjaNameGeneratorTab = makeNinjaNameGeneratorTab({
+        useGenerateNinjaName: () => ({
+          isGenerating: false,
+          error: undefined,
+          generateNinjaName: async () => undefined,
+          ninjaName: undefined,
+          reset: () => undefined,
+        }),
+      });
+
+      render(<NinjaNameGeneratorTab />);
+
+      const { button, cardVerificationInput, cardNumberInput } =
+        formQueries(screen);
+
+      await user.type(cardNumberInput, formValueMock.valid.card);
+      await user.type(cardVerificationInput, formValueMock.valid.verification);
+
+      expect(button).toBeDisabled();
+      expect(cardVerificationInput).toHaveValue(
+        formValueMock.valid.verification
+      );
+      expect(cardNumberInput).toHaveValue(formValueMock.valid.card);
+    });
+  });
+
+  describe('keeps the button disabled if any field is invalid', () => {
+    it('keeps the button disabled if cardNumber field is invalid', async () => {
+      const user = userEvent.setup();
+
+      const NinjaNameGeneratorTab = makeNinjaNameGeneratorTab({
+        useGenerateNinjaName: () => ({
+          isGenerating: false,
+          error: undefined,
+          generateNinjaName: async () => undefined,
+          ninjaName: undefined,
+          reset: () => undefined,
+        }),
+      });
+
+      render(<NinjaNameGeneratorTab />);
+
+      const {
+        button,
+        cardVerificationInput,
+        cardExpirationInput,
+        cardNumberInput,
+      } = formQueries(screen);
+
+      await user.type(cardNumberInput, formValueMock.invalid.card);
+      await user.type(cardVerificationInput, formValueMock.valid.verification);
+      await user.type(
+        cardExpirationInput,
+        dayjs(formValueMock.valid.expiration).format('MM/YYYY')
+      );
+      await user.keyboard('{Tab}'); //workaround
+
+      expect(button).toBeDisabled();
+      expect(cardNumberInput).toHaveValue(formValueMock.invalid.card);
+      expect(cardVerificationInput).toHaveValue(
+        formValueMock.valid.verification
+      );
+      expect(cardExpirationInput).toHaveValue(
+        dayjs(formValueMock.valid.expiration).format('MM/YYYY')
+      );
+    });
+
+    it('keeps the button disabled if cardVerificationValue field is invalid', async () => {
+      const user = userEvent.setup();
+
+      const NinjaNameGeneratorTab = makeNinjaNameGeneratorTab({
+        useGenerateNinjaName: () => ({
+          isGenerating: false,
+          error: undefined,
+          generateNinjaName: async () => undefined,
+          ninjaName: undefined,
+          reset: () => undefined,
+        }),
+      });
+
+      render(<NinjaNameGeneratorTab />);
+
+      const {
+        button,
+        cardVerificationInput,
+        cardExpirationInput,
+        cardNumberInput,
+      } = formQueries(screen);
+
+      await user.type(cardNumberInput, formValueMock.valid.card);
+      await user.type(
+        cardVerificationInput,
+        formValueMock.invalid.verification
+      );
+      await user.type(
+        cardExpirationInput,
+        dayjs(formValueMock.valid.expiration).format('MM/YYYY')
+      );
+      await user.keyboard('{Tab}'); //workaround
+
+      expect(button).toBeDisabled();
+      expect(cardNumberInput).toHaveValue(formValueMock.valid.card);
+      expect(cardVerificationInput).toHaveValue(
+        formValueMock.invalid.verification
+      );
+      expect(cardExpirationInput).toHaveValue(
+        dayjs(formValueMock.valid.expiration).format('MM/YYYY')
+      );
+    });
+
+    it('keeps the button disabled if cardExpirationDate field is invalid', async () => {
+      const user = userEvent.setup();
+
+      const NinjaNameGeneratorTab = makeNinjaNameGeneratorTab({
+        useGenerateNinjaName: () => ({
+          isGenerating: false,
+          error: undefined,
+          generateNinjaName: async () => undefined,
+          ninjaName: undefined,
+          reset: () => undefined,
+        }),
+      });
+
+      render(<NinjaNameGeneratorTab />);
+
+      const {
+        button,
+        cardVerificationInput,
+        cardExpirationInput,
+        cardNumberInput,
+      } = formQueries(screen);
+
+      await user.type(cardNumberInput, formValueMock.valid.card);
+      await user.type(cardVerificationInput, formValueMock.valid.verification);
+      await user.type(cardExpirationInput, formValueMock.invalid.expiration);
+      await user.keyboard('{Tab}'); //workaround
+
+      expect(button).toBeDisabled();
+      expect(cardNumberInput).toHaveValue(formValueMock.valid.card);
+      expect(cardVerificationInput).toHaveValue(
+        formValueMock.valid.verification
+      );
+      expect(cardExpirationInput).toHaveValue(formValueMock.invalid.expiration);
+    });
+  });
+
+  describe('when all fields are valid', () => {
+    it('enables the button', async () => {
+      const user = userEvent.setup();
+
+      const NinjaNameGeneratorTab = makeNinjaNameGeneratorTab({
+        useGenerateNinjaName: () => ({
+          isGenerating: false,
+          error: undefined,
+          generateNinjaName: async () => undefined,
+          ninjaName: undefined,
+          reset: () => undefined,
+        }),
+      });
+
+      render(<NinjaNameGeneratorTab />);
+
+      const {
+        button,
+        cardVerificationInput,
+        cardExpirationInput,
+        cardNumberInput,
+      } = formQueries(screen);
+
+      await user.type(cardNumberInput, formValueMock.valid.card);
+      await user.type(
+        cardExpirationInput,
+        dayjs(formValueMock.valid.expiration).format('MM/YYYY')
+      );
+      await user.type(cardVerificationInput, formValueMock.valid.verification);
+      await user.keyboard('{Tab}'); //workaround
+
+      expect(button).toBeEnabled();
+      expect(cardNumberInput).toHaveValue(formValueMock.valid.card);
+      expect(cardVerificationInput).toHaveValue(
+        formValueMock.valid.verification
+      );
+      expect(cardExpirationInput).toHaveValue(
+        dayjs(formValueMock.valid.expiration).format('MM/YYYY')
+      );
+    });
+
+    it('generates a new name when the form is submitted', async () => {
       const user = userEvent.setup();
       const generateNinjaName = vi.fn();
 
