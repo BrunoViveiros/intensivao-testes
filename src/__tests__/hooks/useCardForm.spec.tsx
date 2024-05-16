@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 import dayjs from 'dayjs';
 
-import { useCardForm } from '../useCardForm';
+import { useCardForm } from '../../hooks/useCardForm';
 
 describe('useCardForm', () => {
   // - When we set any of the fields is invalid, it returns `isValid` as false
